@@ -8,6 +8,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { authClient } from "@/lib/auth-client";
+import { getSidebarStateFromCookie } from "@/lib/sidebar-utils";
 import { ChannelList } from "./channel-list";
 import { CreateChannelDialog } from "./create-channel-dialog";
 import { MessageInput } from "./message-input";
@@ -21,6 +22,7 @@ export function ChatInterface() {
     Id<"messages"> | undefined
   >();
   const [isCreateChannelOpen, setIsCreateChannelOpen] = useState(false);
+  const [sidebarDefaultOpen] = useState(() => getSidebarStateFromCookie());
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -69,7 +71,7 @@ export function ChatInterface() {
   };
 
   return (
-    <SidebarProvider defaultOpen className="h-screen">
+    <SidebarProvider defaultOpen={sidebarDefaultOpen} className="h-screen">
       <ChannelList
         selectedChannelId={selectedChannelId}
         onChannelSelect={setSelectedChannelId}
