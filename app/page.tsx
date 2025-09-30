@@ -2,6 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 
 export default function Home() {
@@ -18,7 +19,12 @@ export default function Home() {
           A minimal authentication template with Convex and Better Auth
         </p>
 
-        {user ? (
+        {user === undefined ? (
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            <p className="text-sm text-gray-500">Loading...</p>
+          </div>
+        ) : user ? (
           <div className="space-y-4">
             <p className="text-green-600 mb-4">
               ✓ You are signed in as {user.email}
