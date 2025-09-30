@@ -20,7 +20,7 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from "@/src/components/ai-elements/prompt-input";
+} from "@/components/ai-elements/prompt-input";
 
 interface MessageInputProps {
   channelId: Id<"channels">;

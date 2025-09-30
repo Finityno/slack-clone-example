@@ -10,12 +10,12 @@ import {
   ConversationContent,
   ConversationEmptyState,
   ConversationScrollButton,
-} from "@/src/components/ai-elements/conversation";
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageAvatar,
   MessageContent,
-} from "@/src/components/ai-elements/message";
+} from "@/components/ai-elements/message";
 
 interface MessageListProps {
   channelId: Id<"channels">;
