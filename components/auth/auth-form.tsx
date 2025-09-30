@@ -104,7 +104,19 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               router.push(redirectTo);
             },
             onError: (ctx) => {
-              setError(ctx.error.message || "Signup failed");
+              console.log("Signup error:", ctx.error);
+              const errorMessage = (ctx.error?.message || ctx.error || "Signup failed").toString().toLowerCase();
+
+              // Convert technical error messages to user-friendly ones
+              if (errorMessage.includes("username") && errorMessage.includes("already exists")) {
+                setError("Username is already taken. Please choose another.");
+              } else if (errorMessage.includes("email") && errorMessage.includes("already exists")) {
+                setError("Email is already registered. Please sign in instead.");
+              } else if (errorMessage.includes("failed to create user")) {
+                setError("Failed to create account. Username or email may already be in use.");
+              } else {
+                setError(ctx.error?.message || "Signup failed. Please try again.");
+              }
               setIsLoading(false);
             },
           },
