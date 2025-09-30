@@ -21,6 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Tooltip,
@@ -43,6 +44,7 @@ export function ChannelList({
   onCreateChannel,
   onChannelDeleted,
 }: ChannelListProps) {
+  const { state } = useSidebar();
   const channels = useQuery(api.channels.list);
   const currentUser = useQuery(api.auth.getCurrentUser);
   const deleteChannel = useMutation(api.channels.remove);
@@ -114,22 +116,40 @@ export function ChannelList({
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : channels.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-                <div className="rounded-full bg-muted p-3 mb-3">
-                  <Hash className="h-5 w-5 text-muted-foreground" />
+              state === "collapsed" ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={onCreateChannel}
+                        className="rounded-full bg-muted p-3 hover:bg-muted/80 transition-colors"
+                      >
+                        <Plus className="h-5 w-5 text-muted-foreground" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>Create your first channel</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
-                <p className="text-sm font-medium mb-1">No channels yet</p>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Create your first channel to get started
-                </p>
-                <button
-                  onClick={onCreateChannel}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Create Channel
-                </button>
-              </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                  <div className="rounded-full bg-muted p-3 mb-3">
+                    <Hash className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm font-medium mb-1">No channels yet</p>
+                  <p className="text-xs text-muted-foreground mb-4">
+                    Create your first channel to get started
+                  </p>
+                  <button
+                    onClick={onCreateChannel}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Create Channel
+                  </button>
+                </div>
+              )
             ) : (
               <SidebarMenu>
                 {channels.map((channel) => {
@@ -138,30 +158,43 @@ export function ChannelList({
 
                   return (
                     <SidebarMenuItem key={channel._id}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <SidebarMenuButton
-                            asChild
-                            isActive={selectedChannelId === channel._id}
-                            onClick={() => onChannelSelect(channel._id)}
-                          >
-                            <button className="w-full">
-                              <Hash className="h-4 w-4" />
-                              <span className="truncate">{channel.name}</span>
-                            </button>
-                          </SidebarMenuButton>
-                        </TooltipTrigger>
-                        <TooltipContent side="right" className="max-w-xs">
-                          <div className="space-y-1">
-                            <p className="font-semibold">#{channel.name}</p>
-                            {channel.description && (
-                              <p className="text-xs opacity-90">
-                                {channel.description}
-                              </p>
-                            )}
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
+                      {state === "collapsed" ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuButton
+                              asChild
+                              isActive={selectedChannelId === channel._id}
+                              onClick={() => onChannelSelect(channel._id)}
+                            >
+                              <button className="w-full">
+                                <Hash className="h-4 w-4" />
+                                <span className="truncate">{channel.name}</span>
+                              </button>
+                            </SidebarMenuButton>
+                          </TooltipTrigger>
+                          <TooltipContent side="right" className="max-w-xs">
+                            <div className="space-y-1">
+                              <p className="font-semibold">#{channel.name}</p>
+                              {channel.description && (
+                                <p className="text-xs opacity-90">
+                                  {channel.description}
+                                </p>
+                              )}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <SidebarMenuButton
+                          asChild
+                          isActive={selectedChannelId === channel._id}
+                          onClick={() => onChannelSelect(channel._id)}
+                        >
+                          <button className="w-full">
+                            <Hash className="h-4 w-4" />
+                            <span className="truncate">{channel.name}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      )}
 
                       {isCreator && (
                         <DropdownMenu>
