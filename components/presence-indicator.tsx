@@ -31,6 +31,7 @@ export function PresenceIndicator({
   userName,
   roomId = "global",
 }: PresenceIndicatorProps) {
+  // This component is only rendered when authenticated (checked in parent)
   const presenceState = usePresence(api.presence, roomId, userId, 10000);
   const updateRoomUser = useMutation(api.presence.updateRoomUser);
 
@@ -47,13 +48,15 @@ export function PresenceIndicator({
 
   // Update presence data with userName when it changes
   useEffect(() => {
-    if (userName) {
-      updateRoomUser({
-        roomId,
-        userId,
-        data: { userName },
-      }).catch((err) => console.error("Failed to update presence:", err));
-    }
+    if (!userName) return;
+
+    updateRoomUser({
+      roomId,
+      userId,
+      data: { userName },
+    }).catch(() => {
+      // Silently fail - wrapper handles auth errors
+    });
   }, [userName, roomId, userId, updateRoomUser]);
 
   // Cache presence state to localStorage when it updates

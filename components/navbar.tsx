@@ -3,7 +3,7 @@
 import { Hash, MessageSquare } from "lucide-react";
 import NotificationMenu from "@/components/navbar-components/notification-menu";
 import UserMenu from "@/components/navbar-components/user-menu";
-import { PresenceIndicator } from "@/components/presence-indicator";
+import { PresenceWrapper } from "@/components/presence-wrapper";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -62,7 +62,7 @@ export default function Navbar({
         {/* Right side */}
         <div className="flex items-center justify-end gap-2 flex-shrink-0">
           {user && (
-            <PresenceIndicator
+            <PresenceWrapper
               userId={user.userId}
               userName={user.name || user.email.split("@")[0]}
               roomId={currentChannel?.name || "global"}

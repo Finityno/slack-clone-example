@@ -104,7 +104,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               router.push(redirectTo);
             },
             onError: (ctx) => {
-              console.log("Signup error:", ctx.error);
               const errorMessage = (ctx.error?.message || ctx.error || "Signup failed").toString().toLowerCase();
 
               // Convert technical error messages to user-friendly ones

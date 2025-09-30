@@ -14,12 +14,17 @@ export const heartbeat = mutation({
     interval: v.number(),
   },
   handler: async (ctx, { roomId, userId, sessionId, interval }) => {
-    // Auth check - ensure user is authenticated
-    const user = await authComponent.getAuthUser(ctx as any);
-    if (!user) {
-      throw new Error("Unauthorized: Must be logged in");
+    // Check authentication - silently fail if not authenticated
+    let user;
+    try {
+      user = await authComponent.getAuthUser(ctx as any);
+    } catch {
+      return null;
     }
-    // Use the authenticated user's ID instead of the passed userId for security
+
+    if (!user) return null;
+
+    // Use the authenticated user's ID for security
     return await presence.heartbeat(ctx, roomId, user._id, sessionId, interval);
   },
 });
@@ -39,11 +44,21 @@ export const updateRoomUser = mutation({
     data: v.object({ userName: v.string() })
   },
   handler: async (ctx, { roomId, userId, data }) => {
-    // Auth check - ensure user is authenticated
-    const user = await authComponent.getAuthUser(ctx as any);
-    if (!user || user._id !== userId) {
-      throw new Error("Unauthorized");
+    // Check authentication - silently fail if not authenticated
+    let user;
+    try {
+      user = await authComponent.getAuthUser(ctx as any);
+    } catch {
+      return null;
     }
+
+    if (!user) return null;
+
+    // Verify the user is updating their own data
+    if (user._id !== userId) {
+      throw new Error("Unauthorized: Cannot update another user's presence");
+    }
+
     return await presence.updateRoomUser(ctx, roomId, userId, data);
   },
 });
